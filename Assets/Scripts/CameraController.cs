@@ -36,7 +36,10 @@ public class CameraController : MonoBehaviour
         
         // Movemos la cámara relativa a hacia dónde está mirando
         Vector3 moveDirection = new Vector3(moveInput.x, 0, moveInput.y);
-        transform.Translate(moveDirection * moveSpeed * Time.deltaTime, Space.Self);
+        //transform.Translate(moveDirection * moveSpeed * Time.deltaTime, Space.Self);
+        Quaternion rotationWithoutX = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+        transform.position += (rotationWithoutX * moveDirection) * moveSpeed * Time.deltaTime;
+
     }
 
     // Es obligatorio habilitar y deshabilitar las acciones por código
