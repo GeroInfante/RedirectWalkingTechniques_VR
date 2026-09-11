@@ -13,7 +13,7 @@ public class ChangeRoomManager : MonoBehaviour
     }
     public GameObject roomA;
     public GameObject roomB;
-    private state currentState;
+    public state currentState;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -35,7 +35,7 @@ public class ChangeRoomManager : MonoBehaviour
 
     }
 
-    public void ChangeStateWithExitZoneATrigger()
+    public virtual void ChangeStateWithExitZoneATrigger()
     {
         switch(currentState)
         {
@@ -62,7 +62,7 @@ public class ChangeRoomManager : MonoBehaviour
 
     }
 
-    public void ChangeStateWithExitZoneBTrigger()
+    public virtual void ChangeStateWithExitZoneBTrigger()
     {
         switch(currentState)
         {
@@ -83,8 +83,8 @@ public class ChangeRoomManager : MonoBehaviour
     }
     private void ActiveRoomB()
     {
-        roomA.SetActive(false);
         roomB.SetActive(true);
+        roomA.SetActive(false);
     }
 }
 
