@@ -1,4 +1,4 @@
-Shader "Custom/PortalShaderURP"
+Shader "Custom/PortalShaderURP_VR"
 {
     Properties
     {
@@ -6,7 +6,6 @@ Shader "Custom/PortalShaderURP"
     }
     SubShader
     {
-        // Estas etiquetas le avisan a Unity que este material es exclusivo de URP
         Tags 
         { 
             "RenderType" = "Opaque" 
@@ -22,41 +21,49 @@ Shader "Custom/PortalShaderURP"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            
+            // ¡CLAVE PARA VR! Habilita el instanciamiento para Single Pass Stereo
+            #pragma multi_compile_instancing 
 
-            // Importamos la librería principal de matemáticas y renderizado de URP
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
             struct Attributes
             {
                 float4 positionOS : POSITION;
+                // Macro requerida para recibir datos del ojo en el vértice
+                UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
                 float4 screenPos  : TEXCOORD0;
+                // Macro requerida para enviar datos del ojo al fragmento
+                UNITY_VERTEX_OUTPUT_STEREO
             };
 
-            // Declaración moderna de texturas en URP
             TEXTURE2D(_MainTex);
             SAMPLER(sampler_MainTex);
 
             Varyings vert(Attributes input)
             {
                 Varyings output;
-                // Transformamos la posición del objeto a la vista de la cámara
+                
+                // Inicializamos el ID del ojo actual (Izquierdo o Derecho)
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
+
                 output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
-                // Calculamos las coordenadas exactas de la pantalla
                 output.screenPos = ComputeScreenPos(output.positionCS);
                 return output;
             }
 
             half4 frag(Varyings input) : SV_Target
             {
-                // Dividimos por 'w' para mantener la perspectiva 3D correcta
+                // Le decimos al fragmento que lea en qué ojo está renderizando
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+
                 float2 screenUV = input.screenPos.xy / input.screenPos.w;
-                
-                // Dibujamos la textura respetando al 100% el color original
                 return SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, screenUV);
             }
             ENDHLSL
