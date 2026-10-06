@@ -3,7 +3,7 @@ using UnityEngine;
 public class ChangeRoomWithCameraVR : ChangeRoomWithCamera
 {
     public Transform playerCamera;
-
+    public PortalSyncURP_Interceptor portalSync;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -13,15 +13,9 @@ public class ChangeRoomWithCameraVR : ChangeRoomWithCamera
 
     protected override void changeCamera()
     {
-        Transform temp = currentCamera;
-        currentCamera.gameObject.SetActive(true);
-
         player.position = nextRoomCamera.position - playerCamera.localPosition;
-        
-        currentCamera = nextRoomCamera;
-        currentCamera.gameObject.SetActive(false);
-        
-        nextRoomCamera = temp;
+        portalSync.altura = -portalSync.altura;
+        Debug.Log("Cambiando de habitación con la cámara VR: "+portalSync.altura);
     }
 }
 
