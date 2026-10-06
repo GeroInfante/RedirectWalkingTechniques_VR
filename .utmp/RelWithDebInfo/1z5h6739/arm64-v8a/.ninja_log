@@ -1,0 +1,10 @@
+# ninja log v5
+60	1982	8130203529559310	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	ad6e4ca838cbe651
+35	2006	8130203529851311	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	7f19e25a22e6b366
+13	2034	8130203530134519	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	5b25687c6c249154
+73	2063	8130203530428762	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	3201c5a1addccff
+24	2127	8130203531095971	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	2ccd6f06c9ba01b6
+87	2221	8130203532042893	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	b2bb4a75f23dcce4
+47	2424	8130203534038431	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	a0d24d61afbfd5ed
+1	2560	8130203535410886	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	7dd40457f310711b
+2560	2673	8130203536577424	C:/Users/TyrionLannister/Desktop/Proyects/becaUns/RedirectWalkingTechniques_VR/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1z5h6739/obj/arm64-v8a/libgame.so	476aeb09d11d6b70
