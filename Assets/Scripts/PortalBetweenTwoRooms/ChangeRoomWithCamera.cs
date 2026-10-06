@@ -44,7 +44,7 @@ public class ChangeRoomWithCamera : ChangeRoomManager
         }
     }
 
-    private void changeCamera()
+    protected virtual void changeCamera()
     {
         Transform temp = currentCamera;
         currentCamera.gameObject.SetActive(true);
