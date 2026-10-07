@@ -410,8 +410,8 @@ Transform:
   m_GameObject: {fileID: 238913955}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.2, y: 154, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 3.2, y: 154.19, z: 0.55}
+  m_LocalScale: {x: 1, y: 0.92288, z: 0.921643}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1848318293}
@@ -918,6 +918,7 @@ MonoBehaviour:
   roomA: {fileID: 1907954752}
   roomB: {fileID: 1165907404}
   currentState: 0
+  currentRoom: 0
   currentCamera: {fileID: 0}
   nextRoomCamera: {fileID: 2075896951}
   player: {fileID: 78042952}
@@ -1395,7 +1396,6 @@ GameObject:
   - component: {fileID: 613821849}
   - component: {fileID: 613821852}
   - component: {fileID: 613821851}
-  - component: {fileID: 613821850}
   m_Layer: 0
   m_Name: PortalRoomA
   m_TagString: Untagged
@@ -1412,34 +1412,12 @@ Transform:
   m_GameObject: {fileID: 613821848}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0.7071068, z: 0, w: 0}
-  m_LocalPosition: {x: -0.33, y: 2.27, z: 7.6043}
+  m_LocalPosition: {x: -0.4, y: 2.27, z: 7.6043}
   m_LocalScale: {x: 0.4595, y: 0.5, z: 0.31281656}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 499896296}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 90}
---- !u!64 &613821850
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 613821848}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &613821851
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1928,7 +1906,6 @@ GameObject:
   - component: {fileID: 808495060}
   - component: {fileID: 808495063}
   - component: {fileID: 808495062}
-  - component: {fileID: 808495061}
   m_Layer: 0
   m_Name: PortalRoomB
   m_TagString: Untagged
@@ -1945,34 +1922,12 @@ Transform:
   m_GameObject: {fileID: 808495059}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0.643, y: 156.15, z: 7.6043}
+  m_LocalPosition: {x: 0.85, y: 156.15, z: 7.6043}
   m_LocalScale: {x: 0.4595, y: 0.5, z: 0.31281656}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 499896296}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
---- !u!64 &808495061
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 808495059}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &808495062
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2883,8 +2838,8 @@ Transform:
   m_GameObject: {fileID: 1183110266}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.2, y: 0.14, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 3.2, y: 0.25, z: 0.57}
+  m_LocalScale: {x: 1, y: 0.92288, z: 0.92164296}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1892909710}

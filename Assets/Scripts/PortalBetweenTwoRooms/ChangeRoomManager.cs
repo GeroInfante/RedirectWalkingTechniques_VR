@@ -13,7 +13,8 @@ public class ChangeRoomManager : MonoBehaviour
     }
     public GameObject roomA;
     public GameObject roomB;
-    public state currentState;
+    public state currentState,currentRoom;
+    private int falseTriggerEnterAmount = 4; // Contador de entradas falsas debido a que ambos son trigger y se solapan
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -23,6 +24,12 @@ public class ChangeRoomManager : MonoBehaviour
 
     public void ChangeStateWithEnterZoneATrigger()
     {
+        if(falseTriggerEnterAmount >0)
+        {
+            falseTriggerEnterAmount--;
+            return;
+        }
+        Debug.Log(currentState+ " Entrada a zona A");
         switch(currentState)
         {
             case state.roomA:
@@ -31,12 +38,15 @@ public class ChangeRoomManager : MonoBehaviour
             case state.inZoneB:
                 currentState = state.mid;
                 break;
+            default:
+                break;
         }
 
     }
 
     public virtual void ChangeStateWithExitZoneATrigger()
     {
+        Debug.Log(currentState +" Salida de zona A");
         switch(currentState)
         {
             case state.inZoneA:
@@ -46,10 +56,18 @@ public class ChangeRoomManager : MonoBehaviour
                 currentState = state.inZoneB;
                 ActiveRoomB();
                 break;
+            default:
+                break;
         }
     }
     public void ChangeStateWithEnterZoneBTrigger()
     {
+        if(falseTriggerEnterAmount > 0)
+        {
+            falseTriggerEnterAmount--;
+            return;
+        }
+        Debug.Log(currentState+ " Entrada a zona B");
         switch(currentState)
         {
             case state.roomB:
@@ -58,12 +76,15 @@ public class ChangeRoomManager : MonoBehaviour
             case state.inZoneA:
                 currentState = state.mid;
                 break;
+            default:
+                break;
         }
 
     }
 
     public virtual void ChangeStateWithExitZoneBTrigger()
     {
+        Debug.Log(currentState +" Salida de zona B");
         switch(currentState)
         {
             case state.inZoneB:
@@ -72,6 +93,8 @@ public class ChangeRoomManager : MonoBehaviour
             case state.mid:
                 currentState = state.inZoneA;
                 ActiveRoomA();
+                break;
+            default:
                 break;
         }
     }

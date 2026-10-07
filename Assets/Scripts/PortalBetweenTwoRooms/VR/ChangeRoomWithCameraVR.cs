@@ -6,10 +6,6 @@ public class ChangeRoomWithCameraVR : ChangeRoomWithCamera
     public PortalSyncURP_Interceptor portalSync;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        currentState = state.roomA;
-    }
 
     protected override void changeCamera()
     {
