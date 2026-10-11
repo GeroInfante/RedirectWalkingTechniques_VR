@@ -9,7 +9,7 @@ public class PortalSyncURP_Interceptor : MonoBehaviour
 
     [Header("El Rig de las Cámaras del Portal")]
     public Transform portalCamerasRig; 
-    public float altura;
+    public ChangeRoomManager changeRoomManager;
 
     [Header("Cámaras del Portal")]
     public Camera camaraIzquierda;
@@ -39,7 +39,7 @@ public class PortalSyncURP_Interceptor : MonoBehaviour
             portalCamerasRig.rotation = mainCameraVR.transform.rotation;
             portalCamerasRig.position = new Vector3(
                 mainCameraVR.transform.position.x, 
-                mainCameraVR.transform.position.y + altura, 
+                mainCameraVR.transform.position.y + changeRoomManager.getNextRoomPosition().y - changeRoomManager.getActualRoomPosition().y, 
                 mainCameraVR.transform.position.z
             );
 

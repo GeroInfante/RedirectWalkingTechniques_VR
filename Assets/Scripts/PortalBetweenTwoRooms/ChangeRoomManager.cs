@@ -16,10 +16,13 @@ public class ChangeRoomManager : MonoBehaviour
     public state currentState,currentRoom;
     private int falseTriggerEnterAmount = 4; // Contador de entradas falsas debido a que ambos son trigger y se solapan
 
+    public Transform player;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         currentState = state.roomA;
+        currentRoom = state.roomA;
     }
 
     public void ChangeStateWithEnterZoneATrigger()
@@ -44,17 +47,21 @@ public class ChangeRoomManager : MonoBehaviour
 
     }
 
-    public virtual void ChangeStateWithExitZoneATrigger()
+    public void ChangeStateWithExitZoneATrigger()
     {
         Debug.Log(currentState +" Salida de zona A");
         switch(currentState)
         {
             case state.inZoneA:
                 currentState = state.roomA;
-                break;
+                break;  
             case state.mid:
                 currentState = state.inZoneB;
-                ActiveRoomB();
+                if(currentRoom == state.roomA)
+                {
+                    changeCamera();
+                    currentRoom = state.roomB;
+                }
                 break;
             default:
                 break;
@@ -82,9 +89,10 @@ public class ChangeRoomManager : MonoBehaviour
 
     }
 
-    public virtual void ChangeStateWithExitZoneBTrigger()
+    public void ChangeStateWithExitZoneBTrigger()
     {
         Debug.Log(currentState +" Salida de zona B");
+
         switch(currentState)
         {
             case state.inZoneB:
@@ -92,22 +100,46 @@ public class ChangeRoomManager : MonoBehaviour
                 break;
             case state.mid:
                 currentState = state.inZoneA;
-                ActiveRoomA();
+                if(currentRoom == state.roomB)
+                {
+                    changeCamera();                    
+                    currentRoom = state.roomA;
+                }
                 break;
             default:
                 break;
         }
     }
 
-    private void ActiveRoomA()
+    protected void changeCamera()
     {
-        roomA.SetActive(true);
-        roomB.SetActive(false);
+        Vector3 nextRoomPosition = getNextRoomPosition();
+        Vector3 actualRoomPosition = getActualRoomPosition();
+        player.position = nextRoomPosition + (player.position - actualRoomPosition);
     }
-    private void ActiveRoomB()
+    
+    public Vector3 getNextRoomPosition()
     {
-        roomB.SetActive(true);
-        roomA.SetActive(false);
+        if(currentRoom == state.roomA)
+        {
+            return roomB.transform.position;
+        }
+        else
+        {
+            return roomA.transform.position;
+        }
+    }
+
+    public Vector3 getActualRoomPosition()
+    {
+        if(currentRoom == state.roomA)
+        {
+            return roomA.transform.position;
+        }
+        else
+        {
+            return roomB.transform.position;
+        }
     }
 }
 
