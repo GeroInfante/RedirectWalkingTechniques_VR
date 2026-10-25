@@ -2,11 +2,8 @@ using UnityEngine;
 
 public class PortalTeleporter : MonoBehaviour
 {
-    // Asigna el "VR Player" (raíz) aquí. Lo usamos SOLO para moverlo.
+    // Lo usamos SOLO para moverlo.
     public Transform xrOriginRoot; 
-    
-    // Asigna la "Main Camera" aquí. La usamos SOLO para calcular la posición.
-    public Transform headCamera; 
 
     public Transform destinationPortal;
     
@@ -22,8 +19,8 @@ public class PortalTeleporter : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // OJO AQUÍ: Calculamos de qué lado está saliendo usando la CÁMARA, no la raíz
-            Vector3 portalToHead = headCamera.position - transform.position;
+            Vector3 playerHeadPosition = other.transform.position;
+            Vector3 portalToHead = playerHeadPosition - transform.position;
             bool exitedFromFront = Vector3.Dot(transform.forward, portalToHead) > 0f;
             
             Debug.Log("exitedFromFront: " + exitedFromFront);
