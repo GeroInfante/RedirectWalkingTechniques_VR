@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class PortalTeleporter : MonoBehaviour
+public class VRPortal : MonoBehaviour
 {
     public Transform xrOriginRoot; // Lo usamos SOLO para moverlo.
 
-    public PortalTeleporter destinationPortal;
+    public VRPortal destinationPortal;
     public Transform playerCamera; // La cámara del jugador, para calcular la posición relativa al portal
     public vrPortalCamera portalCamera; // Referencia al script que controla las cámaras del portal
     
@@ -45,7 +45,7 @@ public class PortalTeleporter : MonoBehaviour
         portalMat.SetTexture("_RightTex", destinationPortal.portalCamera.rightRenderTexture);
     }
 
-    void OnTriggerEnter(Collider other)
+    public void HandleTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
@@ -53,7 +53,7 @@ public class PortalTeleporter : MonoBehaviour
         }
     }
 
-    void OnTriggerExit(Collider other)
+    public void HandleTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
         {
