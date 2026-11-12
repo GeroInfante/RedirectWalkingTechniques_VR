@@ -2,7 +2,7 @@ Shader "Custom/PortalShaderURP_VR_Stereo"
 {
     Properties
     {
-        _MainTex ("Ojo Izquierdo", 2D) = "white" {}
+        _leftTex ("Ojo Izquierdo", 2D) = "white" {}
         _RightTex ("Ojo Derecho", 2D) = "white" {}
     }
     SubShader
@@ -36,8 +36,8 @@ Shader "Custom/PortalShaderURP_VR_Stereo"
             };
 
             // Declaramos ambas texturas
-            TEXTURE2D(_MainTex);
-            SAMPLER(sampler_MainTex);
+            TEXTURE2D(_leftTex);
+            SAMPLER(sampler_leftTex);
             TEXTURE2D(_RightTex);
             SAMPLER(sampler_RightTex);
 
@@ -64,7 +64,7 @@ Shader "Custom/PortalShaderURP_VR_Stereo"
                 // 0 = Ojo Izquierdo | 1 = Ojo Derecho
                 if (unity_StereoEyeIndex == 0)
                 {
-                    return SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, screenUV);
+                    return SAMPLE_TEXTURE2D(_leftTex, sampler_leftTex, screenUV);
                 }
                 else
                 {

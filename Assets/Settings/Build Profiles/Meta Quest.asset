@@ -1011,7 +1011,7 @@ MonoBehaviour:
         m_ExportAsGoogleAndroidProject: 0
         m_DebugSymbolLevel: 1
         m_DebugSymbolFormat: 5
-        m_CurrentDeploymentTargetId: __builtin__target_default
+        m_CurrentDeploymentTargetId: 1WMHH8317W0536
         m_BuildType: 2
         m_LinkTimeOptimization: 0
         m_BuildAppBundle: 0
@@ -1030,7 +1030,6 @@ MonoBehaviour:
   m_Script: {fileID: 15010, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: Quality Settings
   m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.Build.Profile.BuildProfileQualitySettings
-  m_DefaultQualityLevel: Meta Quest Build Profile
+  m_DefaultQualityLevel: Medium
   m_QualityLevels:
-  - Mobile
-  - Meta Quest Build Profile
+  - Medium
