@@ -2,40 +2,61 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class PortalTeleporter : MonoBehaviour
+public class VRPortal : MonoBehaviour
 {
     public Transform xrOriginRoot; // Lo usamos SOLO para moverlo.
 
-    public PortalTeleporter destinationPortal;
-    public Transform playerCamera; // La cámara del jugador, para calcular la posición relativa al portal
+    public VRPortal destinationPortal;
+    public Camera playerCamera; // La cámara del jugador, para calcular la posición relativa al portal
     public vrPortalCamera portalCamera; // Referencia al script que controla las cámaras del portal
     
     private bool portalCameraStatus = true; // Estado de las cámaras del portal
-
+    private static readonly Matrix4x4 PortalFlip = Matrix4x4.Rotate(Quaternion.Euler(0f, 180f, 0f));
     //Para mostrar 
     public MeshRenderer portalScreenRenderer;
 
     private void OnEnable()
     {
         RenderPipelineManager.beginContextRendering += OnBeginContextRendering;
+        Application.onBeforeRender += OnBeforeRender;
     }
 
     private void OnDisable()
     {
         RenderPipelineManager.beginContextRendering -= OnBeginContextRendering;
+        Application.onBeforeRender -= OnBeforeRender;
     }
 
     private void OnBeginContextRendering(ScriptableRenderContext context, List<Camera> cameras)
     {
-        if(portalCameraStatus)
-        {
-            Vector3 playerPositionRelativeToOtherPortal = destinationPortal.getCameraDistanceToPortal();
-            portalCamera.transform.position = transform.position + playerPositionRelativeToOtherPortal;
-            portalCamera.transform.rotation = playerCamera.rotation;
-        }
-        // // 4. Sincronizamos el campo de visión y aplicamos recorte oblicuo
-        // otherPortalCam.fieldOfView = mainCam.fieldOfView;
-        // ApplyObliqueNearClipPlane();
+        if (!IsReady() || !cameras.Contains(playerCamera)) return;
+        SyncPortalView();
+    }
+
+    private void OnBeforeRender()
+    {
+        if (IsReady())
+            SyncPortalView();
+    }
+
+    private bool IsReady()
+    {
+        return portalCameraStatus &&
+               portalCamera != null &&
+               playerCamera != null &&
+               destinationPortal != null;
+    }
+
+    private void SyncPortalView()
+    {
+        Matrix4x4 destToThis = transform.localToWorldMatrix * PortalFlip * destinationPortal.transform.worldToLocalMatrix;
+
+        portalCamera.transform.SetPositionAndRotation(
+            destToThis.MultiplyPoint3x4(playerCamera.transform.position),
+            destToThis.rotation * playerCamera.transform.rotation
+        );
+
+        portalCamera.SyncStereoEyes(playerCamera, destToThis);
     }
 
     private void Start()
@@ -45,7 +66,7 @@ public class PortalTeleporter : MonoBehaviour
         portalMat.SetTexture("_RightTex", destinationPortal.portalCamera.rightRenderTexture);
     }
 
-    void OnTriggerEnter(Collider other)
+    public void HandleTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
@@ -53,7 +74,7 @@ public class PortalTeleporter : MonoBehaviour
         }
     }
 
-    void OnTriggerExit(Collider other)
+    public void HandleTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
         {
@@ -82,7 +103,7 @@ public class PortalTeleporter : MonoBehaviour
     }
     public Vector3 getCameraDistanceToPortal()
     {
-        return playerCamera.position - transform.position;
+        return playerCamera.transform.position - transform.position;
     }
 
     private void Teleport()
