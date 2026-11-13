@@ -56,7 +56,7 @@ public class VRPortal : MonoBehaviour
             destToThis.rotation * playerCamera.transform.rotation
         );
 
-        portalCamera.SyncStereoEyes(playerCamera, destToThis);
+        portalCamera.SyncStereoEyes(playerCamera, destToThis, this.transform);
     }
 
     private void Start()

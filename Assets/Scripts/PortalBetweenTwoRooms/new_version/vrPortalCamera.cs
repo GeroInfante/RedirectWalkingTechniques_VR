@@ -6,6 +6,7 @@ public class vrPortalCamera : MonoBehaviour
     public Camera rightCamera;
     public Camera leftCamera;
     public int textureResolution = 1024;
+    public float clipPlaneOffset = -0.01f;
 
     public RenderTexture rightRenderTexture;
     public RenderTexture leftRenderTexture;
@@ -41,38 +42,15 @@ public class vrPortalCamera : MonoBehaviour
         if (leftRenderTexture != null) leftRenderTexture.Release();
         if (rightRenderTexture != null) rightRenderTexture.Release();
     }
-    // public void SyncStereoEyes(Camera mainCam, Transform thisPortal, Transform destPortal)
-    // {
-    //     // Puente espacial desde el portal donde está el jugador hacia este portal
-    //     Matrix4x4 virtualHeadView = Matrix4x4.Scale(new Vector3(1f, 1f, -1f)) * transform.worldToLocalMatrix;
-
-    //     SyncSingleEye(leftCamera, mainCam, Camera.StereoscopicEye.Left, virtualHeadView);
-    //     SyncSingleEye(rightCamera, mainCam, Camera.StereoscopicEye.Right, virtualHeadView);
-    // }
-
-    // private void SyncSingleEye(Camera eyeCam, Camera mainCam, Camera.StereoscopicEye eye, Matrix4x4 virtualHeadView)
-    // {
-    //     if (eyeCam == null) return;
-
-    //     if (mainCam.stereoEnabled)
-    //     {
-
-    //         Matrix4x4 mainHeadToWorld = mainCam.transform.localToWorldMatrix * Matrix4x4.Scale(new Vector3(1f, 1f, -1f));
-    //         Matrix4x4 headToEye = mainCam.GetStereoViewMatrix(eye) * mainHeadToWorld;
-
-    //         eyeCam.worldToCameraMatrix = headToEye * virtualHeadView;
-    //         eyeCam.projectionMatrix = mainCam.GetStereoProjectionMatrix(eye);
-    //     }
-    // }
-    public void SyncStereoEyes(Camera mainCam, Matrix4x4 destToThis)
+    public void SyncStereoEyes(Camera mainCam, Matrix4x4 destToThis, Transform portalTransform)
     {
         float halfIpd = mainCam.stereoEnabled ? mainCam.stereoSeparation * 0.5f : 0f;
 
-        SyncSingleEye(leftCamera, mainCam, Camera.StereoscopicEye.Left, -halfIpd, destToThis);
-        SyncSingleEye(rightCamera, mainCam, Camera.StereoscopicEye.Right, halfIpd, destToThis);
+        SyncSingleEye(leftCamera, mainCam, Camera.StereoscopicEye.Left, -halfIpd, destToThis, portalTransform);
+        SyncSingleEye(rightCamera, mainCam, Camera.StereoscopicEye.Right, halfIpd, destToThis, portalTransform);
     }
 
-    private void SyncSingleEye(Camera eyeCam, Camera mainCam, Camera.StereoscopicEye eye, float eyeOffsetX, Matrix4x4 destToThis)
+    private void SyncSingleEye(Camera eyeCam, Camera mainCam, Camera.StereoscopicEye eye, float eyeOffsetX, Matrix4x4 destToThis, Transform portalTransform)
     {
         if (eyeCam == null) return;
 
@@ -92,5 +70,23 @@ public class vrPortalCamera : MonoBehaviour
         eyeCam.projectionMatrix = mainCam.stereoEnabled
             ? mainCam.GetStereoProjectionMatrix(eye)
             : mainCam.projectionMatrix;
+        // 5. Alineamos el plano Near exactamente con la superficie del portal
+        Vector3 portalNormal = portalTransform.forward;
+        float signedDistance = Vector3.Dot(portalNormal, portalEyePos - portalTransform.position);
+
+        // Solo aplicamos el corte si el ojo está detrás del plano del portal (evita errores al cruzarlo)
+        if (signedDistance < -0.05f)
+        {
+            Vector4 clipPlane = CameraSpacePlane(eyeCam, portalTransform.position, portalNormal, 1.0f, clipPlaneOffset);
+            eyeCam.projectionMatrix = eyeCam.CalculateObliqueMatrix(clipPlane);
+        }
+    }
+    private Vector4 CameraSpacePlane(Camera cam, Vector3 pos, Vector3 normal, float sideSign, float offset)
+    {
+        Vector3 offsetPos = pos + normal * offset;
+        Matrix4x4 m = cam.worldToCameraMatrix;
+        Vector3 cpos = m.MultiplyPoint(offsetPos);
+        Vector3 cnormal = m.MultiplyVector(normal).normalized * sideSign;
+        return new Vector4(cnormal.x, cnormal.y, cnormal.z, -Vector3.Dot(cpos, cnormal));
     }
 }
