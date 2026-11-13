@@ -11,41 +11,52 @@ public class VRPortal : MonoBehaviour
     public vrPortalCamera portalCamera; // Referencia al script que controla las cámaras del portal
     
     private bool portalCameraStatus = true; // Estado de las cámaras del portal
-
+    private static readonly Matrix4x4 PortalFlip = Matrix4x4.Rotate(Quaternion.Euler(0f, 180f, 0f));
     //Para mostrar 
     public MeshRenderer portalScreenRenderer;
 
     private void OnEnable()
     {
         RenderPipelineManager.beginContextRendering += OnBeginContextRendering;
+        Application.onBeforeRender += OnBeforeRender;
     }
 
     private void OnDisable()
     {
         RenderPipelineManager.beginContextRendering -= OnBeginContextRendering;
+        Application.onBeforeRender -= OnBeforeRender;
     }
 
-    // private void OnBeginContextRendering(ScriptableRenderContext context, List<Camera> cameras)
-    // {
-    //     if(portalCameraStatus)
-    //     {
-    //         Vector3 playerPositionRelativeToOtherPortal = destinationPortal.getCameraDistanceToPortal();
-    //         portalCamera.transform.position = transform.position + playerPositionRelativeToOtherPortal;
-    //         portalCamera.transform.rotation = playerCamera.rotation;
-    //     }
-    //     // // 4. Sincronizamos el campo de visión y aplicamos recorte oblicuo
-    //     // otherPortalCam.fieldOfView = mainCam.fieldOfView;
-    //     // ApplyObliqueNearClipPlane();
-    // }
     private void OnBeginContextRendering(ScriptableRenderContext context, List<Camera> cameras)
     {
-        if (!portalCameraStatus || !cameras.Contains(playerCamera)) return;
-        Vector3 playerPositionRelativeToOtherPortal = destinationPortal.getCameraDistanceToPortal();
-        portalCamera.transform.position = transform.position + playerPositionRelativeToOtherPortal;
-        portalCamera.transform.rotation = playerCamera.transform.rotation;
+        if (!IsReady() || !cameras.Contains(playerCamera)) return;
+        SyncPortalView();
+    }
 
-        // Aplicamos las matrices estéreo exactas de cada ojo
-        portalCamera.SyncStereoEyes(playerCamera, transform, destinationPortal.transform);
+    private void OnBeforeRender()
+    {
+        if (IsReady())
+            SyncPortalView();
+    }
+
+    private bool IsReady()
+    {
+        return portalCameraStatus &&
+               portalCamera != null &&
+               playerCamera != null &&
+               destinationPortal != null;
+    }
+
+    private void SyncPortalView()
+    {
+        Matrix4x4 destToThis = transform.localToWorldMatrix * PortalFlip * destinationPortal.transform.worldToLocalMatrix;
+
+        portalCamera.transform.SetPositionAndRotation(
+            destToThis.MultiplyPoint3x4(playerCamera.transform.position),
+            destToThis.rotation * playerCamera.transform.rotation
+        );
+
+        portalCamera.SyncStereoEyes(playerCamera, destToThis);
     }
 
     private void Start()
