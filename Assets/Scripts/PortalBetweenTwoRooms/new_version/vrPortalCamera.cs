@@ -16,13 +16,7 @@ public class vrPortalCamera : MonoBehaviour
         rightCamera.targetTexture = rightRenderTexture;
         leftCamera.targetTexture = leftRenderTexture;
     }
-    void Start()
-    {
-        rightCamera.transform.localPosition = new Vector3(0.032f, 0, 0);
-        leftCamera.transform.localPosition = new Vector3(-0.032f, 0, 0);
-        rightCamera.depth = -10;
-        leftCamera.depth = -10;
-    }
+
 
     public void turnOnCameras()
     {
@@ -36,5 +30,28 @@ public class vrPortalCamera : MonoBehaviour
     {
         if (leftRenderTexture != null) leftRenderTexture.Release();
         if (rightRenderTexture != null) rightRenderTexture.Release();
+    }
+    public void SyncStereoEyes(Camera mainCam, Transform thisPortal, Transform destPortal)
+    {
+        // Puente espacial desde el portal donde está el jugador hacia este portal
+        Matrix4x4 virtualHeadView = Matrix4x4.Scale(new Vector3(1f, 1f, -1f)) * transform.worldToLocalMatrix;
+
+        SyncSingleEye(leftCamera, mainCam, Camera.StereoscopicEye.Left, virtualHeadView);
+        SyncSingleEye(rightCamera, mainCam, Camera.StereoscopicEye.Right, virtualHeadView);
+    }
+
+    private void SyncSingleEye(Camera eyeCam, Camera mainCam, Camera.StereoscopicEye eye, Matrix4x4 virtualHeadView)
+    {
+        if (eyeCam == null) return;
+
+        if (mainCam.stereoEnabled)
+        {
+
+            Matrix4x4 mainHeadToWorld = mainCam.transform.localToWorldMatrix * Matrix4x4.Scale(new Vector3(1f, 1f, -1f));
+            Matrix4x4 headToEye = mainCam.GetStereoViewMatrix(eye) * mainHeadToWorld;
+
+            eyeCam.worldToCameraMatrix = headToEye * virtualHeadView;
+            eyeCam.projectionMatrix = mainCam.GetStereoProjectionMatrix(eye);
+        }
     }
 }

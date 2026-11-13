@@ -7,7 +7,7 @@ public class VRPortal : MonoBehaviour
     public Transform xrOriginRoot; // Lo usamos SOLO para moverlo.
 
     public VRPortal destinationPortal;
-    public Transform playerCamera; // La cámara del jugador, para calcular la posición relativa al portal
+    public Camera playerCamera; // La cámara del jugador, para calcular la posición relativa al portal
     public vrPortalCamera portalCamera; // Referencia al script que controla las cámaras del portal
     
     private bool portalCameraStatus = true; // Estado de las cámaras del portal
@@ -25,17 +25,27 @@ public class VRPortal : MonoBehaviour
         RenderPipelineManager.beginContextRendering -= OnBeginContextRendering;
     }
 
+    // private void OnBeginContextRendering(ScriptableRenderContext context, List<Camera> cameras)
+    // {
+    //     if(portalCameraStatus)
+    //     {
+    //         Vector3 playerPositionRelativeToOtherPortal = destinationPortal.getCameraDistanceToPortal();
+    //         portalCamera.transform.position = transform.position + playerPositionRelativeToOtherPortal;
+    //         portalCamera.transform.rotation = playerCamera.rotation;
+    //     }
+    //     // // 4. Sincronizamos el campo de visión y aplicamos recorte oblicuo
+    //     // otherPortalCam.fieldOfView = mainCam.fieldOfView;
+    //     // ApplyObliqueNearClipPlane();
+    // }
     private void OnBeginContextRendering(ScriptableRenderContext context, List<Camera> cameras)
     {
-        if(portalCameraStatus)
-        {
-            Vector3 playerPositionRelativeToOtherPortal = destinationPortal.getCameraDistanceToPortal();
-            portalCamera.transform.position = transform.position + playerPositionRelativeToOtherPortal;
-            portalCamera.transform.rotation = playerCamera.rotation;
-        }
-        // // 4. Sincronizamos el campo de visión y aplicamos recorte oblicuo
-        // otherPortalCam.fieldOfView = mainCam.fieldOfView;
-        // ApplyObliqueNearClipPlane();
+        if (!portalCameraStatus || !cameras.Contains(playerCamera)) return;
+        Vector3 playerPositionRelativeToOtherPortal = destinationPortal.getCameraDistanceToPortal();
+        portalCamera.transform.position = transform.position + playerPositionRelativeToOtherPortal;
+        portalCamera.transform.rotation = playerCamera.transform.rotation;
+
+        // Aplicamos las matrices estéreo exactas de cada ojo
+        portalCamera.SyncStereoEyes(playerCamera, transform, destinationPortal.transform);
     }
 
     private void Start()
@@ -82,7 +92,7 @@ public class VRPortal : MonoBehaviour
     }
     public Vector3 getCameraDistanceToPortal()
     {
-        return playerCamera.position - transform.position;
+        return playerCamera.transform.position - transform.position;
     }
 
     private void Teleport()
